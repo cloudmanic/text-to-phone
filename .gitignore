@@ -1,0 +1,9 @@
+# =============================================================================
+# File: .gitignore
+# Author: Spicer Matthews <spicer@cloudmanic.com>
+# Created: 2026-10-24
+# Copyright: 2026 Cloudmanic, LLC. All rights reserved.
+# =============================================================================
+
+.env
+/text-to-phone
