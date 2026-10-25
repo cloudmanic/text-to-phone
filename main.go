@@ -23,6 +23,12 @@ import (
 // main loads settings, starts the server, and stops it cleanly on Ctrl+C or
 // SIGTERM so an in-flight call request is not cut off.
 func main() {
+	// The container image has no shell or curl, so Docker's health check runs
+	// the binary itself in this mode.
+	if len(os.Args) > 1 && os.Args[1] == "healthcheck" {
+		os.Exit(runHealthcheck("http://127.0.0.1:" + envOr("PORT", defaultPort) + "/healthz"))
+	}
+
 	cfg, err := LoadConfig(".env")
 	if err != nil {
 		log.Fatal(err)
@@ -58,6 +64,7 @@ func main() {
 // exercise the real routes without opening a port.
 func NewRouter(cfg Config) http.Handler {
 	mux := http.NewServeMux()
+	mux.HandleFunc("/healthz", healthHandler)
 	mux.Handle("/call", &CallHandler{
 		AccessToken: cfg.AccessToken,
 		To:          cfg.CallToNumber,
@@ -69,4 +76,25 @@ func NewRouter(cfg Config) http.Handler {
 		},
 	})
 	return mux
+}
+
+// healthHandler reports that the server is up. It needs no token and never
+// calls Twilio, so Docker and Checkmate can check it as often as they like.
+func healthHandler(w http.ResponseWriter, _ *http.Request) {
+	writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
+}
+
+// runHealthcheck asks the running server for /healthz and returns the exit
+// code Docker expects: 0 when healthy, 1 when not.
+func runHealthcheck(url string) int {
+	client := &http.Client{Timeout: 3 * time.Second}
+	resp, err := client.Get(url)
+	if err != nil {
+		return 1
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return 1
+	}
+	return 0
 }

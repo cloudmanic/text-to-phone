@@ -88,7 +88,7 @@ func TestTokenInPostBody(t *testing.T) {
 	if rec.Code != http.StatusOK {
 		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body)
 	}
-	if fc.to != "+15550002222" || fc.text != "hello" {
+	if fc.to != "+15550002222" || fc.text != "hello." {
 		t.Errorf("caller got to=%q text=%q", fc.to, fc.text)
 	}
 	var body map[string]string
@@ -121,7 +121,7 @@ func TestJSONBody(t *testing.T) {
 	if rec.Code != http.StatusOK {
 		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body)
 	}
-	if fc.text != "from json" {
+	if fc.text != "from json." {
 		t.Errorf("text = %q", fc.text)
 	}
 }
@@ -145,7 +145,7 @@ func TestRawTextBody(t *testing.T) {
 	if rec.Code != http.StatusOK {
 		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body)
 	}
-	if fc.text != "raw words" {
+	if fc.text != "raw words." {
 		t.Errorf("text = %q", fc.text)
 	}
 }
@@ -165,7 +165,7 @@ func TestMultipartBody(t *testing.T) {
 	if rec.Code != http.StatusOK {
 		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body)
 	}
-	if fc.text != "multi" {
+	if fc.text != "multi." {
 		t.Errorf("text = %q", fc.text)
 	}
 }
