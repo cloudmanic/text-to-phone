@@ -29,6 +29,11 @@ curl -X POST "http://localhost:8080/call?access_token=YOUR_TOKEN" \
 `access_token` and `text` can be in the query string, a form body, or JSON
 (`{"text": "...", "access_token": "..."}`). A plain-text body is read as the text.
 
+Before the call, Markdown is removed and links are shortened to the site name,
+so alert text from tools like Checkmate sounds clean when read aloud.
+
+`GET /healthz` returns 200 when the server is up. It needs no token.
+
 | Result | When |
 |---|---|
 | 200 | Call placed. Returns `call_sid` and `status`. |
@@ -36,3 +41,10 @@ curl -X POST "http://localhost:8080/call?access_token=YOUR_TOKEN" \
 | 401 | Wrong `access_token`. |
 | 405 | Not a POST. |
 | 502 | Twilio refused the call (see the server log). |
+
+## Docker
+
+```bash
+docker build -t text-to-phone .
+docker run --env-file .env -p 8080:8080 text-to-phone
+```

@@ -1,0 +1,11 @@
+# =============================================================================
+# File: .dockerignore
+# Author: Spicer Matthews <spicer@cloudmanic.com>
+# Created: 2026-10-24
+# Copyright: 2026 Cloudmanic, LLC. All rights reserved.
+# =============================================================================
+
+# Keep secrets and local builds out of the image build.
+.env
+.git
+text-to-phone

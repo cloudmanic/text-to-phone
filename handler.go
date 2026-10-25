@@ -41,7 +41,8 @@ type callRequest struct {
 	AccessToken string `json:"access_token"`
 }
 
-// ServeHTTP checks the access token, reads the text, and places the call.
+// ServeHTTP checks the access token, reads the text, cleans it up for speech,
+// and places the call.
 // Only POST is allowed, so a link preview or browser prefetch of the URL can
 // never ring the phone.
 func (h *CallHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -69,7 +70,7 @@ func (h *CallHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	text = strings.TrimSpace(text)
+	text = CleanForSpeech(text)
 	if text == "" {
 		writeError(w, http.StatusBadRequest, "text is required")
 		return
